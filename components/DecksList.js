@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { gray, black } from '../utils/colors';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { gray, black, white } from '../utils/colors';
 import { getAllDecks } from '../api';
 
 export default class DecksList extends React.Component {
@@ -9,8 +9,12 @@ export default class DecksList extends React.Component {
         this.state = { decks: [] };
     }
 
+    componentDidMount() {
+        this.loadDecks();
+    }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.screenProps.currentScreen === 'Decks') {
+        if (nextProps.screenProps.currentScreen === 'DecksList') {
             this.loadDecks();
         }
     }
@@ -23,17 +27,20 @@ export default class DecksList extends React.Component {
                 style={styles.container}
                 data={this.state.decks}
                 keyExtractor={(item, index) => index}
-                renderItem={({ item }) => <Deck key={item.title} {...item} />}
+                renderItem={({ item }) => <Deck key={item.title} {...item} screenProps={{ ...this.props }} />}
             />
         );
     }
 }
 
 const Deck = props => (
-    <View style={styles.deck}>
+    <TouchableOpacity
+        style={styles.deck}
+        onPress={() => props.screenProps.navigation.navigate('DeckDetail', { deckId: props.title })}
+    >
         <Text style={styles.deckTitle}>{props.title}</Text>
         <Text style={styles.deckCards}>{props.questions.length} Cards</Text>
-    </View>
+    </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
@@ -44,8 +51,9 @@ const styles = StyleSheet.create({
         height: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        borderBottomWidth: 2,
-        borderBottomColor: black
+        borderBottomWidth: 1,
+        borderBottomColor: gray,
+        backgroundColor: white
     },
     deckTitle: {
         fontSize: 20
