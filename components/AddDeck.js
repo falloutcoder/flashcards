@@ -10,8 +10,10 @@ export default class AddDeck extends React.Component {
     }
 
     onSubmit = () => {
-        saveDeckTitle(this.state.title);
-        this.props.navigation.navigate('DeckList');
+        const title = this.state.title;
+        this.setState({ title: '' }, () =>
+            saveDeckTitle(title).then(() => this.props.navigation.navigate('Decks'))
+        );
     };
 
     render() {
@@ -24,6 +26,7 @@ export default class AddDeck extends React.Component {
                     onChangeText={text => {
                         this.setState({ title: text });
                     }}
+                    value={this.state.title}
                     spellCheck={false}
                     underlineColorAndroid={black}
                 />
@@ -40,23 +43,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItem: 'center'
+        alignItems: 'center'
     },
     heading: {
         fontSize: 22,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        width: '60%',
+        textAlign: 'center',
+        marginBottom: 20
     },
     submitBtn: {
         backgroundColor: black,
         color: white,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        padding: 20
     },
     input: {
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
-        paddingLeft: 0,
+        padding: 10,
+        margin: 10,
         backgroundColor: white,
-        color: black
+        color: black,
+        width: '80%'
     }
 });

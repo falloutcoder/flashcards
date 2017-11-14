@@ -3,21 +3,26 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { gray, black } from '../utils/colors';
 import { getAllDecks } from '../api';
 
-export default class DeckList extends React.Component {
+export default class DecksList extends React.Component {
     constructor(props) {
         super(props);
         this.state = { decks: [] };
     }
 
-    componentDidMount() {
-        getAllDecks().then(data => this.setState({ decks: Object.values(data) }));
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.screenProps.currentScreen === 'Decks') {
+            this.loadDecks();
+        }
     }
+
+    loadDecks = () => getAllDecks().then(data => this.setState({ decks: Object.values(data ? data : []) }));
 
     render() {
         return (
             <FlatList
                 style={styles.container}
                 data={this.state.decks}
+                keyExtractor={(item, index) => index}
                 renderItem={({ item }) => <Deck key={item.title} {...item} />}
             />
         );
