@@ -1,8 +1,10 @@
 import React from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
+import { Constants } from 'expo';
 import DecksList from './components/DecksList';
 import DeckDetail from './components/DeckDetail';
+import AddCard from './components/AddCard';
 import AddDeck from './components/AddDeck';
 import { getCurrentRouteName } from './utils/helpers';
 import { black, white } from './utils/colors';
@@ -49,6 +51,9 @@ const MainNavigator = StackNavigator({
   },
   DeckDetail: {
     screen: DeckDetail
+  },
+  AddCard: {
+    screen: AddCard
   }
 });
 
@@ -75,6 +80,7 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight
   }
 });
