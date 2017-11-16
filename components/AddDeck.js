@@ -12,7 +12,7 @@ export default class AddDeck extends React.Component {
     onSubmit = () => {
         const title = this.state.title;
         this.setState({ title: '' }, () =>
-            saveDeckTitle(title).then(() => this.props.navigation.navigate('DecksList'))
+            saveDeckTitle(title).then(() => this.props.navigation.goBack())
         );
     };
 
@@ -39,7 +39,7 @@ export default class AddDeck extends React.Component {
     }
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',

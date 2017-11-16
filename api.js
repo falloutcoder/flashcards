@@ -25,8 +25,10 @@ export const saveDeckTitle = title =>
 
 export const getDeck = id =>
     AsyncStorage.getItem(STORAGE_KEY)
-        .then(d => d.json())
-        .then(data => data[id])
+        .then(data => {
+            data = JSON.parse(data);
+            return data[id];
+        })
         .catch(err => {
             console.log(err);
             return null;
@@ -34,10 +36,10 @@ export const getDeck = id =>
 
 export const addCardToDeck = (title, card) =>
     AsyncStorage.getItem(STORAGE_KEY)
-        .then(d => d.json())
         .then(data => {
-            data[title].questions.concat(card);
-            AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            data = JSON.parse(data);
+            data[title].questions = data[title].questions.concat(card);
+            return AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         })
         .catch(err => {
             console.log(err);
