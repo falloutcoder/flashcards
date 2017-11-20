@@ -28,6 +28,19 @@ export default class DeckDetail extends React.Component {
         }
     }
 
+    renderStartQuizButton(id) {
+        if (this.state.questions && this.state.questions.length) {
+            return (
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('QuizMode', { ...this.state, deckId: id })}
+                >
+                    <Text style={styles.quizStartBtn}>Start Quiz</Text>
+                </TouchableOpacity>
+            );
+        }
+        return null;
+    }
+
     render() {
         const id = this.props.navigation.state.params.deckId;
         return (
@@ -39,11 +52,7 @@ export default class DeckDetail extends React.Component {
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('AddCard', { deckId: id })}>
                     <Text style={styles.addCardBtn}>Add Card</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('QuizMode', { ...this.state, deckId: id })}
-                >
-                    <Text style={styles.quizStartBtn}>Start Quiz</Text>
-                </TouchableOpacity>
+                {this.renderStartQuizButton(id)}
             </View>
         );
     }

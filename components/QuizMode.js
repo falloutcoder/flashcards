@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
-import { black, white, green, red, gray } from '../utils/colors';
+import { black, white, green, red, gray, oldlace, lightGrey } from '../utils/colors';
 
 export default class QuizMode extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -14,7 +14,8 @@ export default class QuizMode extends React.Component {
     state = {
         correct: 0,
         incorrect: 0,
-        currentQuestion: 0
+        currentQuestion: 0,
+        questionCardFace: true
     };
 
     componentWillMount() {
@@ -31,24 +32,40 @@ export default class QuizMode extends React.Component {
             inputRange: [0, 180],
             outputRange: ['180deg', '360deg']
         });
+        this.frontOpacity = this.animatedValue.interpolate({
+            inputRange: [89, 90],
+            outputRange: [1, 0]
+        });
+
+        this.backOpacity = this.animatedValue.interpolate({
+            inputRange: [89, 90],
+            outputRange: [0, 1]
+        });
     }
     flipCard() {
-        if (this.value >= 90) {
-            Animated.spring(this.animatedValue, {
-                toValue: 0,
-                friction: 8,
-                tension: 10
-            }).start();
-        } else {
-            Animated.spring(this.animatedValue, {
-                toValue: 180,
-                friction: 8,
-                tension: 10
-            }).start();
-        }
+        this.setState(prevState => ({ questionCardFace: !prevState.questionCardFace }));
+        return Animated.spring(this.animatedValue, {
+            toValue: this.value >= 90 ? 0 : 180,
+            friction: 8,
+            tension: 10
+        }).start();
     }
 
-    render() {
+    onSubmit = answer => {
+        Animated.spring(this.animatedValue, {
+            toValue: 0
+        }).start();
+        this.setState(prevState => ({
+            ...prevState,
+            [answer]: prevState[answer] + 1,
+            currentQuestion: prevState.currentQuestion + 1,
+            questionCardFace: true,
+            quizCompleted:
+                prevState.currentQuestion + 1 === this.props.navigation.state.params.questions.length
+        }));
+    };
+
+    renderQuizCard() {
         const { questions } = this.props.navigation.state.params;
         const frontAnimatedStyle = {
             transform: [{ rotateY: this.frontInterpolate }]
@@ -59,49 +76,98 @@ export default class QuizMode extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.cardNumber}>
-                    {this.state.currentQuestion} / {questions.length}
+                    {this.state.currentQuestion + 1} / {questions.length}
                 </Text>
 
                 <View>
-                    <Animated.View style={[styles.flipCard, frontAnimatedStyle]}>
+                    <Animated.View
+                        style={[styles.flipCard, frontAnimatedStyle, { opacity: this.frontOpacity }]}
+                    >
                         <Text style={styles.content}>
                             Question: {questions[this.state.currentQuestion].question}
                         </Text>
                     </Animated.View>
 
-                    <Animated.View style={[backAnimatedStyle, styles.flipCard, styles.flipCardBack]}>
+                    <Animated.View
+                        style={[
+                            backAnimatedStyle,
+                            styles.flipCard,
+                            styles.flipCardBack,
+                            { opacity: this.backOpacity }
+                        ]}
+                    >
                         <Text style={styles.content}>
                             Answer: {questions[this.state.currentQuestion].answer}
                         </Text>
                     </Animated.View>
                 </View>
                 <TouchableOpacity onPress={() => this.flipCard()}>
-                    <Text style={styles.switchBtn}>Answer</Text>
+                    <Text style={styles.switchBtn}>
+                        {this.state.questionCardFace ? 'View Answer' : 'View Question'}
+                    </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() =>
-                        this.setState(prevState => ({
-                            ...prevState,
-                            correct: prevState.correct + 1,
-                            currentQuestion: prevState.currentQuestion + 1
-                        }))}
-                >
+                <TouchableOpacity onPress={() => this.onSubmit('correct')}>
                     <Text style={styles.correctBtn}>Correct</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() =>
-                        this.setState(prevState => ({
-                            ...prevState,
-                            incorrect: prevState.incorrect + 1,
-                            currentQuestion: prevState.currentQuestion + 1
-                        }))}
-                >
+                <TouchableOpacity onPress={() => this.onSubmit('incorrect')}>
                     <Text style={styles.incorrectBtn}>In Correct</Text>
                 </TouchableOpacity>
             </View>
         );
     }
+
+    render() {
+        if (this.state.quizCompleted) {
+            const totalQuestions = this.props.navigation.state.params.questions.length;
+            const { correct, incorrect } = this.state;
+            return (
+                <View style={quizResultStyles.container}>
+                    <Text style={quizResultStyles.heading}>Quiz Completed!</Text>
+                    <Text style={quizResultStyles.correct}>
+                        {correct} answer(s) were correct.({(correct / totalQuestions * 100).toFixed(2)}%)
+                    </Text>
+                    <Text style={quizResultStyles.incorrect}>
+                        {incorrect} answer(s) were incorrect.({(incorrect / totalQuestions * 100).toFixed(2)}%)
+                    </Text>
+                    <Text style={quizResultStyles.total}>{totalQuestions} Total questions.</Text>
+                </View>
+            );
+        } else {
+            return this.renderQuizCard();
+        }
+    }
 }
+
+const quizResultStyles = StyleSheet.create({
+    container: {
+        backgroundColor: white,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1
+    },
+    heading: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: black
+    },
+    correct: {
+        color: green,
+        margin: 10,
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    incorrect: {
+        color: red,
+        margin: 10,
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    total: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: gray
+    }
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -118,18 +184,18 @@ const styles = StyleSheet.create({
     flipCard: {
         height: 200,
         width: 200,
-        backgroundColor: gray,
+        backgroundColor: lightGrey,
         alignItems: 'center',
-        justifyContent: 'center',
-        backfaceVisibility: 'hidden'
+        justifyContent: 'center'
     },
     content: {
         fontSize: 20,
-        color: white,
+        color: black,
+        fontWeight: 'bold',
         width: 90
     },
     flipCardBack: {
-        backgroundColor: green,
+        backgroundColor: oldlace,
         position: 'absolute',
         top: 0
     },
