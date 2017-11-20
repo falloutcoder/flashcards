@@ -1,6 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import { Notifications, Permissions } from 'expo';
 
+// Reference: https://github.com/react-community/react-navigation/issues/51#issuecomment-323536642
 export function getCurrentRouteName(navigationState) {
     if (!navigationState) {
         return null;

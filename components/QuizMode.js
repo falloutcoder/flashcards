@@ -20,6 +20,9 @@ export default class QuizMode extends React.Component {
     };
 
     componentWillMount() {
+        // References
+        // https://github.com/browniefed/examples/blob/animated_basic/flip/animatedbasic/index.ios.js
+        // https://github.com/facebook/react-native/issues/1973#issuecomment-262059217
         this.animatedValue = new Animated.Value(0);
         this.value = 0;
         this.animatedValue.addListener(({ value }) => {

@@ -61,6 +61,9 @@ const MainNavigator = StackNavigator({
     }
 });
 
+// https://github.com/react-community/react-navigation/issues/51#issuecomment-323536642
+// getCurrentRouteName and onNavigationStateChange reference
+
 export default class App extends React.Component {
     state = {};
 
