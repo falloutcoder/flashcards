@@ -39,7 +39,9 @@ export default class DeckDetail extends React.Component {
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('AddCard', { deckId: id })}>
                     <Text style={styles.addCardBtn}>Add Card</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('AddCard', { deckId: id })}>
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('QuizMode', { ...this.state, deckId: id })}
+                >
                     <Text style={styles.quizStartBtn}>Start Quiz</Text>
                 </TouchableOpacity>
             </View>

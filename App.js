@@ -6,6 +6,7 @@ import DecksList from './components/DecksList';
 import DeckDetail from './components/DeckDetail';
 import AddCard from './components/AddCard';
 import AddDeck from './components/AddDeck';
+import QuizMode from './components/QuizMode';
 import { getCurrentRouteName } from './utils/helpers';
 import { black, white } from './utils/colors';
 
@@ -54,6 +55,9 @@ const MainNavigator = StackNavigator({
   },
   AddCard: {
     screen: AddCard
+  },
+  QuizMode : {
+    screen: QuizMode
   }
 });
 
