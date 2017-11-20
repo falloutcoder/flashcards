@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { black, white, green, red, gray, oldlace, lightGrey } from '../utils/colors';
+import { setLocalNotification, clearLocalNotification } from '../utils/helpers';
 
 export default class QuizMode extends React.Component {
     static navigationOptions = ({ navigation }) => ({
@@ -63,6 +64,7 @@ export default class QuizMode extends React.Component {
             quizCompleted:
                 prevState.currentQuestion + 1 === this.props.navigation.state.params.questions.length
         }));
+        clearLocalNotification().then(setLocalNotification);
     };
 
     renderQuizCard() {
