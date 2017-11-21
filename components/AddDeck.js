@@ -12,7 +12,10 @@ export default class AddDeck extends React.Component {
     onSubmit = () => {
         const title = this.state.title;
         this.setState({ title: '' }, () =>
-            saveDeckTitle(title).then(() => this.props.navigation.goBack())
+            saveDeckTitle(title).then(() => {
+                this.props.navigation.goBack();
+                this.props.navigation.navigate('DeckDetail', { deckId: title });
+            })
         );
     };
 

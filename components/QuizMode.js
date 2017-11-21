@@ -3,6 +3,14 @@ import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native
 import { black, white, green, red, gray, oldlace, lightGrey } from '../utils/colors';
 import { setLocalNotification, clearLocalNotification } from '../utils/helpers';
 
+const initialState = {
+    correct: 0,
+    incorrect: 0,
+    currentQuestion: 0,
+    questionCardFace: true,
+    quizCompleted: false
+};
+
 export default class QuizMode extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         headerTintColor: white,
@@ -12,12 +20,7 @@ export default class QuizMode extends React.Component {
         title: `Quiz: ${navigation.state.params.deckId}`
     });
 
-    state = {
-        correct: 0,
-        incorrect: 0,
-        currentQuestion: 0,
-        questionCardFace: true
-    };
+    state = { ...initialState };
 
     componentWillMount() {
         // References
@@ -135,6 +138,14 @@ export default class QuizMode extends React.Component {
                         {incorrect} answer(s) were incorrect.({(incorrect / totalQuestions * 100).toFixed(2)}%)
                     </Text>
                     <Text style={quizResultStyles.total}>{totalQuestions} Total questions.</Text>
+                    <View style={quizResultStyles.actions}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                            <Text style={quizResultStyles.actionsBtn}>Go Back!</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => this.setState({ ...initialState })}>
+                            <Text style={quizResultStyles.actionsBtn}>Restart Quiz</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             );
         } else {
@@ -171,6 +182,16 @@ const quizResultStyles = StyleSheet.create({
         fontSize: 12,
         fontWeight: 'bold',
         color: gray
+    },
+    actions: {
+        flexDirection: 'row'
+    },
+    actionsBtn: {
+        backgroundColor: black,
+        color: white,
+        margin: 10,
+        padding: 20,
+        borderWidth: 1
     }
 });
 
